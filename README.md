@@ -45,4 +45,4 @@ This was the result of SVM-Augment. The predictions weren't better than SVM-batc
 2.  Both batchnorm and L1l2 data were generated from non-convergent CNN model. It seems that we don't even need a good CNN model to extract features from satellite images. We will add a model that is trained with augment data later and compare the regression result. [Updated]
 3.  Since the best regression model used batchnorm CNN model to extract image features, we couldn't figure out the relationship between CNN model and the regression model. Is plain transfer learning is enough to generate good regression features? Should we construct a CNN model that has the lowest possible loss (to extract image features) or just build the best regression model with any given data?
 
-
+Credit to : https://github.com/carsonluuu/Poverty-Prediction-by-Satellite-Imagery
