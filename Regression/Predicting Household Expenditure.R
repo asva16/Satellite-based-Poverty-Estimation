@@ -40,24 +40,6 @@ L1_cv = data_prep(L1)
 L1L2_cv = data_prep(L1L2)
 L2_cv = data_prep(L2)
 
-dim(Augment_cv[[1]][[1]][["data"]])[2]
-var_reduced = data.frame(Data=c('Before Transformation', 'Augment', 'Base', 'BatchNorm', 'Dropout', 'L1', 'L1L2', "L2"),
-                         No_of_Var=c(40,dim(Augment_cv[[1]][[1]][["data"]])[2],
-                                     dim(Base_cv[[1]][[1]][["data"]])[2],
-                                     dim(BatchNorm_cv[[1]][[1]][["data"]])[2],
-                                     dim(Dropout_cv[[1]][[1]][["data"]])[2],
-                                     dim(L1_cv[[1]][[1]][["data"]])[2],
-                                     dim(L1L2_cv[[1]][[1]][["data"]])[2],
-                                     dim(L2_cv[[1]][[1]][["data"]])[2]
-                         ))
-ggplot(var_reduced) +
-  aes(x = reorder(Data,No_of_Var), y = No_of_Var, label=No_of_Var) +
-  geom_col(fill = "Steelblue") +
-  geom_text(nudge_y = -1) +
-  labs(x='Data', y='Number of Variables after preparation') +
-  coord_flip() +
-  theme_minimal() 
-
 ## 
 # speed up computation with parallel processing
 all_cores <- parallel::detectCores(logical = FALSE)
@@ -187,7 +169,16 @@ all_model_rank = model_rank_rsq %>% left_join(model_rank_rmse,
                              by = c('wflow_id', 'data'), 
                              suffix = c(".rsq",".rmse"))
 all_model_rank$avg.rank = (all_model_rank$rank.rsq + all_model_rank$rank.rmse)/2
+knitr::kable(head(all_model_rank), 'simple')
 all_model_rank = all_model_rank %>% arrange(avg.rank)
+ggplot(all_model_rank) +
+  aes(x = wflow_id, y = data, fill = avg.rank, label=avg.rank) +
+  geom_tile(size = 1.2) +
+  geom_text() +
+  scale_fill_distiller(palette = "Oranges", direction = 1) +
+  labs(x='Regression Model', y='Data Extracted from Images', fill='Average Rank', caption = 'lower better') +
+  theme_minimal() +
+  theme(legend.position = 'top')
 
 ### create predictions
 # model with lowest rmse
@@ -205,7 +196,7 @@ best_rmse = unlist(batchnorm_res %>%
                      slice(n=1))
 MLmetrics::RMSE(unlist(best_batchnorm_res), BatchNorm_cv$data$y)
 ggplot(data = NULL, aes(x=BatchNorm_cv$data$y, y=unlist(best_batchnorm_res))) +
-  geom_point() + coord_obs_pred() + labs(x='Aktual', y='Estimasi') +
+  geom_point() + coord_obs_pred() + labs(x='Actual', y='Estimation') +
   geom_abline(slope = 1) + geom_abline(slope = 1, intercept = best_rmse, linetype='dashed') +
   geom_abline(slope = 1, intercept = -best_rmse, linetype='dashed')
 
@@ -220,6 +211,11 @@ best_l1l2_res = l1l2_res %>%
   predict(L1L2_cv$data)
 l1l2_res %>% 
   rank_results()
+best_l1l2_metric = unlist(l1l2_res %>% 
+                     rank_results() %>%
+                     select(mean) %>%
+                     slice(n=1))
 ggplot(data = NULL, aes(x=L1L2_cv$data$y, y=unlist(best_l1l2_res))) +
-  geom_point() + coord_obs_pred() + labs(x='Aktual', y='Estimasi')+
-  geom_abline(slope = 1)
+  geom_point() + coord_obs_pred() + labs(x='Actual', y='Estimation')+
+  geom_abline(slope = 1) + geom_abline(slope = 1, intercept = best_l1l2_metric, linetype='dashed') +
+  geom_abline(slope = 1, intercept = -best_l1l2_metric, linetype='dashed')
