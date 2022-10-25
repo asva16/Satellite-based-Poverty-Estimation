@@ -16,12 +16,14 @@ We tried a different method to lower the validation loss, as shown in the pictur
 ![image](https://user-images.githubusercontent.com/48485276/197675251-62ee9031-4691-4da0-b304-d386ab854864.png)
 As for accuracy, the dropout model, augment model, and base model gave us almost a convergence result. Looking at the graph, the augment model is still the best one.
 
+We expected that the data generated from augment model are good predictors to estimate household expenditure.
+
 ### Regression
 #### Modeling
 Using the relu activation function caused some variables to be zero. Since all observations in these variables had zero value, we need to remove them because we can't use them by using step_nzv() function. SVR, XGBoost, LightGBM, and RF parameters are tuned using tune race anova. Tune race anova is faster than grid search and random search. These four models were regressed with 5-repeated 10-folds cross-validation and 7 different data. The results are as follows:
 ![image](https://user-images.githubusercontent.com/48485276/197677603-ddd87ea4-4bf9-4f77-9f65-6f1f6c6d6201.png)
 ![image](https://user-images.githubusercontent.com/48485276/197678084-b5383906-5acb-4652-b7f8-e14dda372d0c.png)
-The combination of SVM and batchnorm data gave us the lowest RMSE, while the combination of Random Forest and L1L2 data gave us the highest R-squared. The combination of Random Forest and L1L2 were also the best overall model (highest R-squared and 4th lowest RMSE).
+The combination of SVM and batchnorm data gave us the lowest RMSE, while the combination of Random Forest and L1L2 data gave us the highest R-squared. The combination of Random Forest and L1L2 were also the best overall model (highest R-squared and 4th lowest RMSE). 
 
 ![image](https://user-images.githubusercontent.com/48485276/197679673-8bb6a486-9f4d-418c-98d5-6bd59cac9568.png)
 
@@ -34,7 +36,13 @@ This was the result of SVM-batchnorm. The predictions were excellent, with only 
 ![image](https://user-images.githubusercontent.com/48485276/197681722-24a86744-bf5b-4110-84c8-b43de9508c2c.png)
 The result of RF-L1L2 predictions was terrible. The predictions didn't even show a straight line and seemed to create two clusters.
 
+[Updated]
+![image](https://user-images.githubusercontent.com/48485276/197712004-8aac386a-0a2e-4b73-937b-697f48145dea.png)
+This was the result of SVM-Augment. The predictions weren't better than SVM-batchnorm. SVM-Augment produces 3 underestimate predictions. From these two figures alone, we expected that SVM-batchnorm was the best model.
+
 ## What to pay attention to
-We forgot to set a seed before training the image classification. tf.random.set_seed() can be used to set seed for reproducibility and put before Sequential(). We will update this later. 
+1.  We forgot to set seed before training the image classification. tf.random.set_seed() can be used to set seed for reproducibility and is put before Sequential(). We will set seed for the next CNN project(s).
+2.  Both batchnorm and L1l2 data were generated from non-convergent CNN model. It seems that we don't even need a good CNN model to extract features from satellite images. We will add a model that is trained with augment data later and compare the regression result. [Updated]
+3.  Since the best regression model used batchnorm CNN model to extract image features, we couldn't figure out the relationship between CNN model and the regression model. Is plain transfer learning is enough to generate good regression features? Should we construct a CNN model that has the lowest possible loss (to extract image features) or just build the best regression model with any given data?
 
 
