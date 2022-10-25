@@ -35,6 +35,6 @@ This was the result of SVM-batchnorm. The predictions were excellent with only o
 The result of RF-L1L2 predictions was terrible. The predictions didn't even show a straight line and seemed to create two clusters.
 
 ## What to pay attention to
-I forgot to set a seed before training the image classification. tf.random.set_seed() can be used to set seed for reproducibility and put before Sequential(). We will update this later. 
+We forgot to set a seed before training the image classification. tf.random.set_seed() can be used to set seed for reproducibility and put before Sequential(). We will update this later. 
 
 
