@@ -21,6 +21,7 @@ We expected that the data generated from augment model are good predictors to es
 ### Regression
 #### Modeling
 Using the relu activation function caused some variables to be zero. Since all observations in these variables had zero value, we need to remove them because we can't use them by using step_nzv() function. SVR, XGBoost, LightGBM, and RF parameters are tuned using tune race anova. Tune race anova is faster than grid search and random search. These four models were regressed with 5-repeated 10-folds cross-validation and 7 different data. The results are as follows:
+
 ![image](https://user-images.githubusercontent.com/48485276/197677603-ddd87ea4-4bf9-4f77-9f65-6f1f6c6d6201.png)
 ![image](https://user-images.githubusercontent.com/48485276/197678084-b5383906-5acb-4652-b7f8-e14dda372d0c.png)
 The combination of SVM and batchnorm data gave us the lowest RMSE, while the combination of Random Forest and L1L2 data gave us the highest R-squared. The combination of Random Forest and L1L2 were also the best overall model (highest R-squared and 4th lowest RMSE). 
@@ -31,13 +32,17 @@ The combination of SVM and batchnorm data gave us the lowest RMSE, while the com
 We had two candidate models, SVM-batchnorm and RF-L1L2. Predictions will be made using these two candidates. The predictions are plotted using a scatter plot with three additional lines, a solid line and two dashed lines. The solid line indicates the diagonal line marking perfect predictions, while the dashed line refers to prediction error (RMSE). The RMSE value was obtained from the 5-repeated 10-folds cross-validation.
 
 ![image](https://user-images.githubusercontent.com/48485276/197680434-539c243d-a6f3-4f7f-9edb-be847281f579.png)
+
 This was the result of SVM-batchnorm. The predictions were excellent, with only one underestimate prediction.
 
 ![image](https://user-images.githubusercontent.com/48485276/197681722-24a86744-bf5b-4110-84c8-b43de9508c2c.png)
+
 The result of RF-L1L2 predictions was terrible. The predictions didn't even show a straight line and seemed to create two clusters.
 
 [Updated]
+
 ![image](https://user-images.githubusercontent.com/48485276/197712004-8aac386a-0a2e-4b73-937b-697f48145dea.png)
+
 This was the result of SVM-Augment. The predictions weren't better than SVM-batchnorm. SVM-Augment produces 3 underestimate predictions. From these two figures alone, we expected that SVM-batchnorm was the best model.
 
 ## Conclusions and Recommendations
