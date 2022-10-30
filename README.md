@@ -40,6 +40,9 @@ The result of RF-L1L2 predictions was terrible. The predictions didn't even show
 ![image](https://user-images.githubusercontent.com/48485276/197712004-8aac386a-0a2e-4b73-937b-697f48145dea.png)
 This was the result of SVM-Augment. The predictions weren't better than SVM-batchnorm. SVM-Augment produces 3 underestimate predictions. From these two figures alone, we expected that SVM-batchnorm was the best model.
 
+## Conclusions and Recommendations
+It is certainly possible to predict poverty using satellite images. This work only describes the steps in a simple way. Another way is by using Image Segmentation to extract number of houses, the length of roads, and etc. More regression observations are preferable as this can generate more stable result. Satellite-based poverty estimation works better in low-level administration such as villages as the coverage are of an village is quite small. 
+
 ## What to pay attention to
 1.  We forgot to set seed before training the image classification. tf.random.set_seed() can be used to set seed for reproducibility and is put before Sequential(). We will set seed for the next CNN project(s).
 2.  Both batchnorm and L1l2 data were generated from non-convergent CNN model. It seems that we don't even need a good CNN model to extract features from satellite images. We will add a model that is trained with augment data later and compare the regression result. [Updated]
